@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify, render_template
 import os
+from stocks import get_price, parse_date, str2date, get_recommendation
 
 app = Flask(__name__)
 
@@ -17,10 +18,16 @@ def get_info():
     intent = data['queryResult']['intent']['displayName']
 
     if intent == 'Test Intent':
-        day = data['queryResult']['parameters']['date-time']
-        response = 'Today is ' + str(day)
-    elif intent == 'AnotherSample Intent':
-        response = 'OK'
+        try:
+            date = data['queryResult']['parameters']['date-time']
+            price = get_price(parse_date(date))
+            response = 'The price in ' + str2date(parse_date(date)) + ' is ' + str(price) + '$'
+        except:
+            response = 'The date you are trying to request is not available.'
+    
+    elif intent == 'Recommendation Intent':
+        response = get_recommendation()
+    
     else:
         response = 'I dunno.'
     

@@ -3,6 +3,12 @@ from datetime import datetime
 from dateutil.parser import parse
 import pandas as pd
 
+def str2date(date):
+	return date.strftime("%Y-%m-%d")
+
+def parse_date(date):
+	return parse(date).replace(tzinfo=None)
+
 def get_history(symbol='VHGEX', period='2mo'):
 	equity = yf.Ticker(symbol)
 	df = equity.history(period=period)[['Close']]
@@ -27,7 +33,7 @@ def compute_bb():
 	lower_band = sma - 2 * rstd
 	lower_band = lower_band.rename(columns={'y': 'lower'})
 
-	# Making of plot
+	# Join into a Dataframe
 	bb = df.join(upper_band).join(lower_band).join(sma.rename(columns={'y': 'sma'})).join(rstd.rename(columns={'y': 'rstd'}))
 	bb = bb.dropna()
 
@@ -61,9 +67,15 @@ def get_price(parsed_date):
 		(df.index.month == parsed_date.month) &
 		(df.index.year == parsed_date.year)]
 
-	return price.values[0]
+	try:
+		price = round(price.values[0], 2)
+	except:
+		price = df['y'][-1]
+		
+	return price
 
-def get_recommendation(bb):
+def get_recommendation():
+	bb = compute_bb()
 	today = bb['y'][-1]
 	yesterday = bb['y'][-2]
 	percentage_increase = 100 * (today - yesterday) / yesterday
@@ -71,33 +83,9 @@ def get_recommendation(bb):
 
 	evolution = round((bb['y'][-1]-bb['sma'][-1])/(2*bb['rstd'][-1])*100)
 
-	message = date + '\n'
-	message += '{}% | {}$\n\n'.format(round(percentage_increase,2), round(today, 2))
-
 	if evolution > 0:
-	  message += '{}% recommended SELL for added rentability'.format(evolution)
+	  message = '{}% recommended SELL for added rentability'.format(evolution)
 	else:
-  		message += '{}% recommended BUY for added rentability'.format(-evolution)
+  		message = '{}% recommended BUY for added rentability'.format(-evolution)
 
 	return message
-
-
-
-df = get_history()
-bb = compute_bb()
-
-date = '2020-10-05T12:00:00+01:00'
-parsed_date = parse(date).replace(tzinfo=None)
-
-print(parsed_date.strftime("%Y-%m-%d"), get_price(parsed_date))
-
-print(get_recommendation(bb))
-
-
-
-
-
-
-
-
-
