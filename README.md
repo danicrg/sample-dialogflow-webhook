@@ -10,4 +10,7 @@ Heroku deploy of a web hook to attend Dialogflow requests
 
 ## Production
 
-Heroku
+		heroku login
+		heroku create <App name>
+		git push heroku main
+
