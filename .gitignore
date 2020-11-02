@@ -1,9 +1,15 @@
 .DS_store
-env/*
-env
+
 __pycache__
 Dockerfile
+
 heroku.yml
 build.sh
 run.sh
 
+
+env/*
+env
+.env
+
+ngrok
