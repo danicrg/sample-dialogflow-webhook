@@ -17,7 +17,7 @@ def get_info():
 
     intent = data['queryResult']['intent']['displayName']
 
-    if intent == 'Test Intent':
+    if intent == 'Price Intent':
         try:
             date = data['queryResult']['parameters']['date-time']
             price = get_price(parse_date(date))

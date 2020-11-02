@@ -60,6 +60,7 @@ def plot_bb(bb):
 
 
 def get_price(parsed_date):
+	
 	df = get_history(period='10y')
 
 	price = df['y'].loc[
