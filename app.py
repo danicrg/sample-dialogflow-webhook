@@ -1,6 +1,5 @@
 from flask import Flask, request, jsonify, render_template
 import os
-import requests
 import json
 
 app = Flask(__name__)
@@ -19,7 +18,10 @@ def get_info():
     intent = data['queryResult']['intent']['displayName']
 
     if intent == 'Test Intent':
-        response = 'Test fulfilled'
+        day = data['queryResult']['parameters']['date-time']
+
+
+        response = 'Today is ' + str(day)
     elif intent == 'AnotherSample Intent':
         response = 'OK'
     else:
